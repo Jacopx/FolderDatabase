@@ -7,14 +7,15 @@
 import sys
 import os
 from prettytable import PrettyTable
+import operator
 
 
 def clear():
     os.system('clear')
 
 
-def print_menu():
-    clear()  # This function not work inside the IDE console
+def print_menu():  # Printing menus
+    clear()
     print(30 * "-", "MENU", 30 * "-")
     print("1. Show tree")
     print("2. Add bookmark")
@@ -26,7 +27,7 @@ def print_menu():
     print(67 * "-")
 
 
-def menu(root_dir="."):
+def menu(root_dir="."):  # Managing user choice and invoke proper functions
 
     # Text menu in Python
     loop = True
@@ -65,7 +66,7 @@ def tree(root_dir="."):
     input("\nClose? ")
 
 
-def print_tree(root_dir="."):
+def print_tree(root_dir="."):  # 1st choice of the menu to show the database
     t = PrettyTable(["Folder", "Description", "Keywords", "# Files"])
     t.align["Folder"] = "l"
     t.align["Description"] = "l"
@@ -80,10 +81,10 @@ def print_tree(root_dir="."):
                     keyword = f.readline()
                     f.close()
                     t.add_row([dirName[len(root_dir) + 1:], descr[:len(descr) - 1], keyword, len(fileList)])
-    print(t)
+    print(t.get_string(sort_key=operator.itemgetter(1, 0), sortby="Folder"))
 
 
-def add(root_dir="."):
+def add(root_dir="."):  # 2nd adding a new bookmark on the database
     x = PrettyTable(["Folder", "# Files"])
     x.align["Folder"] = "l"
     x.align["#Files"] = "l"
@@ -97,7 +98,7 @@ def add(root_dir="."):
             if not bookmark:
                 x.add_row([dirName[len(root_dir)+1:], len(fileList)])
 
-    print(x)
+    print(x.get_string(sort_key=operator.itemgetter(1, 0), sortby="Folder"))
     path = input("Insert the path to the folder to be indexed: ")
 
     f = open(root_dir + "/" + path + "/.info", "w")
@@ -109,7 +110,7 @@ def add(root_dir="."):
     f.close()
 
 
-def edit(root_dir="."):
+def edit(root_dir="."):  # 3rd Editing and existing bookmark
     print_tree(root_dir)
     path = input("Which bookmark edit: ")
 
@@ -140,14 +141,15 @@ def edit(root_dir="."):
     f.close()
 
 
-def delete(root_dir="."):
+def delete(root_dir="."):  # 4th Delete an existing bookmark
     print_tree(root_dir)
     path = input("Which bookmark delete: ")
     os.remove(root_dir + "/" + path + "/.info")
     print("Bookmark removed!")
     input("\nClose? ")
 
-def sdescr(root_dir="."):
+
+def sdescr(root_dir="."):  # 5th Search by description field
     descr = input("Insert description to search for: ")
 
     t = PrettyTable(["Folder", "Description", "Keywords", "# Files"])
@@ -168,7 +170,7 @@ def sdescr(root_dir="."):
                     f.close()
                     if found:
                         t.add_row([dirName[len(root_dir) + 1:], descr_read[:len(descr_read) - 1], keyword_read, len(fileList)])
-    print(t)
+    print(t.get_string(sort_key=operator.itemgetter(1, 0), sortby="Folder"))
 
 
 def skeyword(root_dir="."):
@@ -192,7 +194,7 @@ def skeyword(root_dir="."):
                     f.close()
                     if found:
                         t.add_row([dirName[len(root_dir) + 1:], descr_read[:len(descr_read) - 1], keyword_read, len(fileList)])
-    print(t)
+    print(t.get_string(sort_key=operator.itemgetter(1, 0), sortby="Folder"))
 
 
 if __name__ == "__main__":
