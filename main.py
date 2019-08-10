@@ -19,7 +19,7 @@ def print_menu():
     print("1. Show tree")
     print("2. Add bookmark")
     print("3. -----")
-    print("4. -----")
+    print("4. Delete Bookmark")
     print("5. Exit")
     print(67 * "-")
 
@@ -42,6 +42,8 @@ def menu(root_dir="."):
             tree(root_dir)
         elif choice == 2:
             add(root_dir)
+        elif choice == 4:
+            delete(root_dir)
         elif choice == 5:
             print("Exiting from software, bye!")
             loop = False  # This will make the while loop to end as not value of loop is set to False
@@ -51,6 +53,11 @@ def menu(root_dir="."):
 
 
 def tree(root_dir="."):
+    print_tree(root_dir)
+    input("\nClose? ")
+
+
+def print_tree(root_dir="."):
     t = PrettyTable(["Folder", "Description", "Keywords", "#Files"])
     t.align["Folder"] = "l"
     t.align["Description"] = "l"
@@ -64,10 +71,8 @@ def tree(root_dir="."):
                     descr = f.readline()
                     keyword = f.readline()
                     f.close()
-                    t.add_row([dirName[len(root_dir)+1:], descr[:len(descr)-1], keyword, len(fileList)])
-
+                    t.add_row([dirName[len(root_dir) + 1:], descr[:len(descr) - 1], keyword, len(fileList)])
     print(t)
-    input("\nClose? ")
 
 
 def add(root_dir="."):
@@ -96,6 +101,14 @@ def add(root_dir="."):
     f.write("\n")
     f.write(keyword)
     f.close()
+
+
+def delete(root_dir="."):
+    print_tree(root_dir)
+    path = input("Which bookmark delete: ")
+    os.remove(root_dir + "/" + path + "/.info")
+    print("Bookmark removed!")
+    input("\nClose? ")
 
 
 if __name__ == "__main__":
