@@ -93,7 +93,7 @@ def add(root_dir="."):  # 2nd adding a new bookmark on the database
         bookmark = False
         if len(fileList) > 0:
             for fname in fileList:
-                if fname.startswith("."):
+                if fname.startswith(".info"):
                     bookmark = True
             if not bookmark:
                 x.add_row([dirName[len(root_dir)+1:], len(fileList)])
