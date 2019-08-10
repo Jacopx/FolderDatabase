@@ -17,7 +17,7 @@ def print_menu():
     clear()  # This function not work inside the IDE console
     print(30 * "-", "MENU", 30 * "-")
     print("1. Show tree")
-    print("2. -----")
+    print("2. Add bookmark")
     print("3. -----")
     print("4. -----")
     print("5. Exit")
@@ -40,6 +40,8 @@ def menu(root_dir="."):
 
         if choice == 1:
             tree(root_dir)
+        elif choice == 2:
+            add(root_dir)
         elif choice == 5:
             print("Exiting from software, bye!")
             loop = False  # This will make the while loop to end as not value of loop is set to False
@@ -49,16 +51,51 @@ def menu(root_dir="."):
 
 
 def tree(root_dir="."):
-    x = PrettyTable(["Folder", "Description", "#Files"])
-    x.align["Folder"] = "l"
-    x.align["Description"] = "l"
-    x.align["#Files"] = "l"
+    t = PrettyTable(["Folder", "Description", "Keywords", "#Files"])
+    t.align["Folder"] = "l"
+    t.align["Description"] = "l"
+    t.align["Keywords"] = "l"
+    t.align["#Files"] = "l"
     for dirName, subdirList, fileList in os.walk(root_dir):
         if len(fileList) > 0:
-            x.add_row([dirName[len(root_dir)+1:], "", len(fileList)])
+            for fname in fileList:
+                if fname == ".info":
+                    f = open(dirName + "/.info")
+                    descr = f.readline()
+                    keyword = f.readline()
+                    f.close()
+                    t.add_row([dirName[len(root_dir)+1:], descr[:len(descr)-1], keyword, len(fileList)])
+
+    print(t)
+    input("\nClose? ")
+
+
+def add(root_dir="."):
+    x = PrettyTable(["Folder", "Description", "Keywords", "#Files"])
+    x.align["Folder"] = "l"
+    x.align["Description"] = "l"
+    x.align["Keywords"] = "l"
+    x.align["#Files"] = "l"
+
+    for dirName, subdirList, fileList in os.walk(root_dir):
+        bookmark = False
+        if len(fileList) > 0:
+            for fname in fileList:
+                if fname.startswith("."):
+                    bookmark = True
+            if not bookmark:
+                x.add_row([dirName[len(root_dir)+1:], "", "", len(fileList)])
 
     print(x)
-    input("\nClose? ")
+    path = input("Insert the path to the folder to be indexed: ")
+
+    f = open(root_dir + "/" + path + "/.info", "w")
+    descr = input("Insert description: ")
+    keyword = input("Insert keyword: ")
+    f.write(descr)
+    f.write("\n")
+    f.write(keyword)
+    f.close()
 
 
 if __name__ == "__main__":
