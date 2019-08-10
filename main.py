@@ -20,7 +20,9 @@ def print_menu():
     print("2. Add bookmark")
     print("3. Edit bookmark")
     print("4. Delete Bookmark")
-    print("5. Exit")
+    print("5. Search Bookmark for description")
+    print("6. Delete Bookmark for keywords")
+    print("7. Exit")
     print(67 * "-")
 
 
@@ -31,7 +33,7 @@ def menu(root_dir="."):
 
     while loop:
         print_menu()
-        choice = input("Enter your choice [1-5]: ")
+        choice = input("Enter your choice [1-7]: ")
 
         if choice != '' and choice.isdecimal():
             choice = int(choice)
@@ -47,6 +49,10 @@ def menu(root_dir="."):
         elif choice == 4:
             delete(root_dir)
         elif choice == 5:
+            sdescr(root_dir)
+        elif choice == 6:
+            skeyword(root_dir)
+        elif choice == 7:
             print("Exiting from software, bye!")
             loop = False  # This will make the while loop to end as not value of loop is set to False
         else:
@@ -140,6 +146,53 @@ def delete(root_dir="."):
     os.remove(root_dir + "/" + path + "/.info")
     print("Bookmark removed!")
     input("\nClose? ")
+
+def sdescr(root_dir="."):
+    descr = input("Insert description to search for: ")
+
+    t = PrettyTable(["Folder", "Description", "Keywords", "# Files"])
+    t.align["Folder"] = "l"
+    t.align["Description"] = "l"
+    t.align["Keywords"] = "l"
+    t.align["# Files"] = "l"
+    for dirName, subdirList, fileList in os.walk(root_dir):
+        if len(fileList) > 0:
+            for fname in fileList:
+                if fname == ".info":
+                    found = False
+                    f = open(dirName + "/.info")
+                    descr_read = f.readline()
+                    if descr in descr_read:
+                        found = True
+                    keyword_read = f.readline()
+                    f.close()
+                    if found:
+                        t.add_row([dirName[len(root_dir) + 1:], descr_read[:len(descr_read) - 1], keyword_read, len(fileList)])
+    print(t)
+
+
+def skeyword(root_dir="."):
+    keyword = input("Insert keywords to search for: ")
+
+    t = PrettyTable(["Folder", "Description", "Keywords", "# Files"])
+    t.align["Folder"] = "l"
+    t.align["Description"] = "l"
+    t.align["Keywords"] = "l"
+    t.align["# Files"] = "l"
+    for dirName, subdirList, fileList in os.walk(root_dir):
+        if len(fileList) > 0:
+            for fname in fileList:
+                if fname == ".info":
+                    found = False
+                    f = open(dirName + "/.info")
+                    descr_read = f.readline()
+                    keyword_read = f.readline()
+                    if keyword in keyword_read:
+                        found = True
+                    f.close()
+                    if found:
+                        t.add_row([dirName[len(root_dir) + 1:], descr_read[:len(descr_read) - 1], keyword_read, len(fileList)])
+    print(t)
 
 
 if __name__ == "__main__":
