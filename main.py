@@ -18,7 +18,7 @@ def print_menu():
     print(30 * "-", "MENU", 30 * "-")
     print("1. Show tree")
     print("2. Add bookmark")
-    print("3. -----")
+    print("3. Edit bookmark")
     print("4. Delete Bookmark")
     print("5. Exit")
     print(67 * "-")
@@ -42,6 +42,8 @@ def menu(root_dir="."):
             tree(root_dir)
         elif choice == 2:
             add(root_dir)
+        elif choice == 3:
+            edit(root_dir)
         elif choice == 4:
             delete(root_dir)
         elif choice == 5:
@@ -58,11 +60,11 @@ def tree(root_dir="."):
 
 
 def print_tree(root_dir="."):
-    t = PrettyTable(["Folder", "Description", "Keywords", "#Files"])
+    t = PrettyTable(["Folder", "Description", "Keywords", "# Files"])
     t.align["Folder"] = "l"
     t.align["Description"] = "l"
     t.align["Keywords"] = "l"
-    t.align["#Files"] = "l"
+    t.align["# Files"] = "l"
     for dirName, subdirList, fileList in os.walk(root_dir):
         if len(fileList) > 0:
             for fname in fileList:
@@ -76,10 +78,8 @@ def print_tree(root_dir="."):
 
 
 def add(root_dir="."):
-    x = PrettyTable(["Folder", "Description", "Keywords", "#Files"])
+    x = PrettyTable(["Folder", "# Files"])
     x.align["Folder"] = "l"
-    x.align["Description"] = "l"
-    x.align["Keywords"] = "l"
     x.align["#Files"] = "l"
 
     for dirName, subdirList, fileList in os.walk(root_dir):
@@ -89,7 +89,7 @@ def add(root_dir="."):
                 if fname.startswith("."):
                     bookmark = True
             if not bookmark:
-                x.add_row([dirName[len(root_dir)+1:], "", "", len(fileList)])
+                x.add_row([dirName[len(root_dir)+1:], len(fileList)])
 
     print(x)
     path = input("Insert the path to the folder to be indexed: ")
@@ -97,6 +97,37 @@ def add(root_dir="."):
     f = open(root_dir + "/" + path + "/.info", "w")
     descr = input("Insert description: ")
     keyword = input("Insert keyword: ")
+    f.write(descr)
+    f.write("\n")
+    f.write(keyword)
+    f.close()
+
+
+def edit(root_dir="."):
+    print_tree(root_dir)
+    path = input("Which bookmark edit: ")
+
+    # Reading old file infos
+    f_old = open(root_dir + "/" + path + "/.info")
+    descr_old = f_old.readline()
+    keyword_old = f_old.readline()
+    f_old.close()
+
+    #  Delete old file
+    os.remove(root_dir + "/" + path + "/.info")
+    f = open(root_dir + "/" + path + "/.info", "w")
+
+    # Show old text and waiting for edits, if enter pressed values remain unchanged
+    print("[" + descr_old[:len(descr_old)-1] + "]")
+    descr = input("Insert description: ")
+    if len(descr) == 0:
+        descr = descr_old[:len(descr_old)-1]
+
+    print("[" + keyword_old + "]")
+    keyword = input("Insert keyword: ")
+    if len(keyword) == 0:
+        keyword = keyword_old
+
     f.write(descr)
     f.write("\n")
     f.write(keyword)
