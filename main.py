@@ -22,7 +22,7 @@ def print_menu():  # Printing menus
     print("3. Edit bookmark")
     print("4. Delete Bookmark")
     print("5. Search Bookmark for description")
-    print("6. Delete Bookmark for keywords")
+    print("6. Search Bookmark for keywords")
     print("7. Exit")
     print(67 * "-")
 
